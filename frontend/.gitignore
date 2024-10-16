@@ -1,11 +1,15 @@
+# macOS system files
 .DS_Store
-node_modules
-/dist
 
+# Node.js modules (frontend)
+frontend/node_modules
 
-# local env files
-.env.local
-.env.*.local
+# Frontend distribution folder
+frontend/dist
+
+# Local environment files
+frontend/.env.local
+frontend/.env.*.local
 
 # Log files
 npm-debug.log*
@@ -22,5 +26,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-# Ignore virtual environment
-./backend/venv/
+# Ignore virtual environment in backend
+backend/venv/
