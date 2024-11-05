@@ -1,0 +1,5 @@
+Add backend functionality for parsing triage.json
+
+Make functions for adding/modifying items in login.json, and possibly deleting users?
+
+Add data for user type (standard, medical, admin) to login.json
