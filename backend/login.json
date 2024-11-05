@@ -1,5 +1,5 @@
 [
-{"JohnDoe": "letmein!", "Type" : "User"},
-{"JaneDoe": "green_beans", "Type" : "Medical"},
-{"Example": "2manypickles4me", "Type" : "Admin"}
+{"Username" : "JohnDoe", "Password" : "letmein!", "Type" : "User"},
+{"Username" : "JaneDoe", "Password" : "green_beans", "Type" : "Medical"},
+{"Username" : "Example", "Password" : "2manypickles4me", "Type" : "Admin"}
 ]

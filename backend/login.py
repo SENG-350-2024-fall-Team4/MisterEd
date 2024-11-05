@@ -13,9 +13,9 @@ def checkLogin(db, username, password):
     returning a string based on login status (Admin, Medical, User, Fail)
     """
     for entry in db:
-        if username not in entry.keys():
+        if entry["Username"] != username:
             continue
-        elif entry[username] != password:
+        elif entry["Password"] != password:
             return "Fail"
         else:
             return entry["Type"]
