@@ -1,5 +1,5 @@
 [
-{"JohnDoe": "letmein!"},
-{"JaneDoe": "green_beans"},
-{"Example": "2manypickles4me"}
+{"JohnDoe": "letmein!", "Type" : "User"},
+{"JaneDoe": "green_beans", "Type" : "Medical"},
+{"Example": "2manypickles4me", "Type" : "Admin"}
 ]

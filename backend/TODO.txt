@@ -2,4 +2,4 @@ Add backend functionality for parsing triage.json
 
 Make functions for adding/modifying items in login.json, and possibly deleting users?
 
-Add data for user type (standard, medical, admin) to login.json
+Make separate fields for username and password in login.json (as cleanup, and to prevent using "Type" as a username since that could conflict with existing code)
