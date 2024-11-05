@@ -1,5 +1,5 @@
 [
-    {"sore throat": "strep throat"},
-    {"nausea": "flu"},
-    {"cough": "covid-19"}
+    {"strep throat": "sore throat"},
+    {"flu": "nausea"},
+    {"covid-19": "cough"}
 ]

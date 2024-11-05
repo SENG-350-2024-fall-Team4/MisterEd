@@ -3,6 +3,10 @@ import sys
 
 
 def loadJSON():
+    """
+    Return illness database
+    or backup of illness database
+    """
     try:
         db_fp = open("illness.json")
     except:
@@ -10,6 +14,7 @@ def loadJSON():
             db_fp = open("illness_bak.json")
         except:
             return None
+        
     db = json.load(db_fp)
     db_fp.close()
     return db
@@ -19,11 +24,12 @@ def assessPatient(db, symptom):
     """
     Given database and symptom
     returns illness linked to symptom
+    or ask for more information
     """
     for entry in db:
-        if symptom in entry.keys():
-            return entry[symptom]
-        
+        for ill, sym in entry.items():
+            if symptom == sym:
+                return ill
     return "Need more info for diagnosis"
 
 
@@ -35,4 +41,4 @@ if db == None:
 symptom = input("Enter symptom: ").lower()
 diagnosis = assessPatient(db, symptom)
 
-print(diagnosis)
+print("Diagnosis: " + diagnosis)
