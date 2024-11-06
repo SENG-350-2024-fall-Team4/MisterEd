@@ -7,8 +7,8 @@
             <input type="text" id="symptom" name="symptom" required maxlength="20"/>
         </div>
         <div class="dropdown">
-            <label for="my"
-            <button onclick="severity()" class="dropbtn">Dropdown</button>
+            <label for="severity">Severity:</label>
+            <button type="button" onclick="severity()" class="dropbtn">Dropdown</button>
             <div id="severity" class="dropdown-content">
                 <a>High</a>
                 <a>Medium</a>
