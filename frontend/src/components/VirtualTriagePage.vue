@@ -16,6 +16,9 @@
             </div>
         </div>
     </div>
+    <div>
+        <button>Submit</button>
+    </div>
 </template>
 
 <script>
