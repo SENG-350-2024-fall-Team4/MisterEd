@@ -28,7 +28,7 @@ def assessPatient(db, symptom):
     """
     for entry in db:
         for ill, sym in entry.items():
-            if symptom == sym:
+            if set(symptom).issubset(set(sym)):
                 return ill
     return "Need more info for diagnosis"
 
@@ -38,7 +38,13 @@ if db == None:
     print("Error: database unreachable")
     sys.exit()
 
+symptomList = []
 symptom = input("Enter symptom: ").lower()
-diagnosis = assessPatient(db, symptom)
+
+while symptom != "":
+    symptomList.append(symptom)
+    symptom = input("Enter symptom: ").lower()
+
+diagnosis = assessPatient(db, symptomList)
 
 print("Diagnosis: " + diagnosis)
