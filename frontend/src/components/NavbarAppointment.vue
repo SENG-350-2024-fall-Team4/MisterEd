@@ -1,7 +1,9 @@
 <template>
 <nav class="navbar bg-body-tertiary fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Manage appointments</a>
+      <!-- <a class="navbar-brand" href="#">Manage appointments</a> -->
+      <!-- Dynamic navbar title based on the current route -->
+      <a class="navbar-brand" href="#">{{ pageTitle }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -13,11 +15,14 @@
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Create appointment</a>
+              <!-- <a class="nav-link active" aria-current="page" href="#">Create appointment</a>
               <a class="nav-link active" aria-current="page" href="#">Manage appointments</a>
-              <a class="nav-link active" aria-current="page" href="#">Edit Profile</a>
+              <a class="nav-link active" aria-current="page" href="#">Edit Profile</a> -->
+              <router-link class="nav-link active" to="/create-appointment">Create appointment</router-link>
+              <router-link class="nav-link active" to="/">Manage appointments</router-link>
+              <router-link class="nav-link active" to="/edit-profile">Edit Profile</router-link>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" href="#">Link</a>
             </li>
             <li class="nav-item dropdown">
@@ -32,7 +37,7 @@
                 </li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
               </ul>
-            </li>
+            </li> -->
           </ul>
           <form class="d-flex mt-3" role="search">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -44,8 +49,37 @@
   </nav>
 </template>
 
-<script>
+<!-- <script>
 export default {
   name: 'NavbarAppointment',
+};
+</script> -->
+
+<script>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+export default {
+  name: 'NavbarAppointment',
+  setup() {
+    const route = useRoute();
+
+    const pageTitle = computed(() => {
+      switch (route.name) {
+        case 'CreateAppointment':
+          return 'Create Appointment';
+        case 'ManageAppointment':
+          return 'Manage Appointments';
+        case 'EditProfile':
+          return 'Edit Profile';
+        default:
+          return 'Manage Appointments';
+      }
+    });
+
+    return {
+      pageTitle,
+    };
+  },
 };
 </script>

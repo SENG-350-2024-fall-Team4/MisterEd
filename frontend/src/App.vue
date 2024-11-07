@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <ManageAppointment />
+    <router-view />
   </div>
 </template>
 
 <script>
-import ManageAppointment from './components/ManageAppointment.vue'; // Ensure the path is correct
-
 export default {
   name: 'App',
-  components: {
-    ManageAppointment,
-  },
 };
 </script>
 
