@@ -161,7 +161,7 @@ input[type="text"], input[type="password"] {
 
 .subtitle {
   .subtitle-action {
-    color: rgb(83, 62, 205);
+    color: rgb(21, 138, 83);
     font-weight: bold;
     cursor: pointer;
   }

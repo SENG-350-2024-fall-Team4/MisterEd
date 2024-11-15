@@ -203,7 +203,7 @@ input[type="password"] {
 
 .subtitle {
   .subtitle-action {
-    color: rgb(55, 45, 196);
+    color: rgb(23, 141, 94);
     font-weight: bold;
     cursor: pointer;
   }

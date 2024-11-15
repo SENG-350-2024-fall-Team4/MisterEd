@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar bg-body-tertiary fixed-top">
+  <nav class="navbar bg-body-tertiary fixed-top backgroung-info">
     <div class="container-fluid">
       <!-- Page title as a clickable route -->
       <router-link :to="pageRoute" class="navbar-brand fw-bold">{{ pageTitle }}</router-link>
@@ -120,4 +120,20 @@ export default {
 .offcanvas-title {
   font-weight: bold;
 }
+
+/* Make the navbar pop up with shadow and a bottom border */
+.navbar {
+  background-color: #f8f9fa; /* Light background color to distinguish the navbar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect for elevation */
+  border-bottom: 2px solid #dee2e6; /* Border to clearly define the end of the navbar */
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.offcanvas-title {
+  font-weight: bold;
+}
+
 </style>
