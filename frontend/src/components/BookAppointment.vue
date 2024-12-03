@@ -74,8 +74,18 @@
 
 <script>
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { useSeverityStore } from '../store/severity'; // Ensure this store is correctly defined and imported
 
 export default {
+  setup() {
+    // Use Pinia store to manage severity
+    const severityStore = useSeverityStore();
+
+    return {
+      severity: severityStore.severity, // Reactive severity level from the store
+    };
+  },
   data() {
     return {
       firstName: '',
@@ -89,34 +99,54 @@ export default {
   methods: {
     async submitAppointment() {
       try {
-        // Simulate success message without database
+        // Send a POST request to the backend with appointment details
+          await axios.post('http://localhost:5000/api/appointments', {
+          first_name: this.firstName,
+          last_name: this.lastName,
+          address: this.address,
+          phone_number: this.phoneNumber,
+          insurance_number: this.insuranceNumber,
+          description: this.description,
+          severity: this.severity, // Pass severity level from the store
+        });
+
+        // Display success message on successful booking
         Swal.fire({
-          title: `Appointment Booked!`,
+          title: 'Appointment Booked!',
           text: `${this.firstName} ${this.lastName}, you are put on the queue. You will receive a text with your scheduled appointment time about an hour before your appointment.`,
           icon: 'success',
           confirmButtonText: 'OK',
-          background: '#d9f7ff', // Light blue background color
-          color: '#333', // Dark text color for contrast
-          confirmButtonColor: '#4CAF50', // Green color for confirm button
-          iconColor: '#4CAF50', // Icon color to match the theme
+          background: '#d9f7ff',
+          color: '#333',
+          confirmButtonColor: '#4CAF50',
+          iconColor: '#4CAF50',
           customClass: {
             popup: 'custom-swal-popup',
             title: 'custom-swal-title',
             content: 'custom-swal-content',
           },
         });
-        
-        // Redirect after a brief delay
+
+        // Redirect to home page after 2 seconds
         setTimeout(() => {
-          this.$router.push('/'); // Redirect to the homepage
-        }, 5000);
+          this.$router.push('/');
+        }, 2000);
       } catch (error) {
         console.error('Error booking appointment:', error);
+
+        // Display error message
+        Swal.fire({
+          title: 'Error',
+          text: 'An error occurred while booking the appointment. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 .container {

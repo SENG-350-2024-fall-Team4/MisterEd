@@ -66,6 +66,10 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+import { getCSRFToken } from '../store/auth'
+
+
 export default {
   data() {
     return {
@@ -91,34 +95,50 @@ export default {
     }
   },
   methods: {
-    signUp() {
-      // Check if passwords match
+    async signUp() {
       if (this.password !== this.confirmPassword) {
-        this.error = "Passwords do not match!";
+        this.error = 'Passwords do not match!';
         setTimeout(() => (this.error = ''), 3000);
         return;
       }
-
-      // Simulate successful registration
-      this.success = "Registration successful! Please log in.";
-      this.error = ""; // Clear any existing error message
-      this.clearForm();
-
-      // Redirect to sign-in page after a delay
-      setTimeout(() => {
-        this.$router.push('/');
-      }, 2000);
+      try {
+        const response = await fetch('http://localhost:5000/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+          },
+          body: JSON.stringify({
+            first_name: this.firstName,
+            last_name: this.lastName,
+            employee_id: this.employeeId,
+            password: this.password,
+          }),
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          // SweetAlert success popup
+          Swal.fire({
+            title: 'Account Created Successfully!',
+            text: 'Please sign in with your new credentials.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            background: '#f0f8ff',
+            confirmButtonColor: '#4CAF50',
+            iconColor: '#4CAF50',
+          }).then(() => {
+            this.$router.push('/');
+          });
+        } else {
+          this.error = data.error || 'Registration failed';
+        }
+      } catch (err) {
+        this.error = 'An error occurred during registration: ' + err;
+        setTimeout(() => (this.error = ''), 3000);
+      }
     },
-    clearForm() {
-      this.firstName = '';
-      this.lastName = '';
-      this.employeeId = '';
-      this.password = '';
-      this.confirmPassword = '';
-      this.error = '';
-      this.success = '';
-    }
-  }
+  },
 };
 </script>
 

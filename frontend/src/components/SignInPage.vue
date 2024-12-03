@@ -46,33 +46,42 @@
 </template>
 
 <script>
+      import { useAuthStore } from '../store/auth'
+
 export default {
-  data() {
+setup() {
+    const authStore = useAuthStore()
     return {
-      employeeId: "", // Placeholder for employee ID input
-      password: "",
-      error: ""
+    authStore
     }
-  },
-  computed: {
+},
+data() {
+    return {
+    employeeId: "", // Renamed for consistency
+    password: "",
+    error: ""
+    }
+},
+computed: {
     loginValid() {
-      return this.employeeId && this.password;
+    return this.employeeId && this.password;
     }
-  },
-  methods: {
-    signIn() {
-      // Simulated login check
-      if (this.employeeId === "admin" && this.password === "password") {
-        this.error = ""; // Clear any previous error
-        this.$router.push("/home"); // Redirect to the home page on successful login
-      } else {
-        this.error = "Login failed. Please check your credentials.";
-      }
+},
+methods: {
+    async signIn() {
+    try {
+        await this.authStore.login(this.employeeId, this.password, this.$router)
+        if (!this.authStore.isAuthenticated) {
+        this.error = 'Login failed. Please check your credentials.'
+        }
+    } catch (err) {
+        this.error = 'An error occurred during login.'
+    }
     },
     resetError() {
-      this.error = "";
+    this.error = ""
     }
-  }
+}
 }
 </script>
 

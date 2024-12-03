@@ -52,7 +52,7 @@
             <select
               id="severity"
               class="form-select w-50"
-              v-model="severity"
+              v-model="severityStore.severity"
               @change="onDropdownSelect"
             >
               <option value="" disabled>Select severity level...</option>
@@ -62,7 +62,7 @@
             </select>
             <button
               class="btn btn-primary mt-3"
-              :disabled="!severity"
+              :disabled="!severityStore.severity"
               @click="bookAppointment"
             >
               Book Appointment
@@ -86,38 +86,37 @@
 
 <script>
 import SignInPage from './SignInPage.vue';
-import { useRouter } from 'vue-router';
+import { useSeverityStore } from '../store/severity';
+import { useRouter } from 'vue-router'; // Import useRouter hook
 
 export default {
   components: {
     SignInPage,
   },
-  data() {
-    return {
-      severity: '', // Local placeholder for selected severity level
-    };
-  },
   setup() {
-    const router = useRouter();
+    const severityStore = useSeverityStore();
+    const router = useRouter(); // Get router instance
 
     function selectSeverity(level) {
-      this.severity = level;
+      severityStore.setSeverity(level);
     }
 
     function bookAppointment() {
-      if (this.severity) {
-        router.push('/book-appointment');
+      if (severityStore.severity) {
+        console.log(`Booking appointment with severity: ${severityStore.severity}`);
+        router.push('/book-appointment'); // Use router instance to navigate
       }
     }
 
     function onDropdownSelect() {
-      console.log(`Dropdown selected: ${this.severity}`);
+      console.log(`Dropdown selected: ${severityStore.severity}`);
     }
 
-    return { selectSeverity, bookAppointment, onDropdownSelect };
+    return { severityStore, selectSeverity, bookAppointment, onDropdownSelect };
   },
 };
 </script>
+
 
 <style scoped>
 /* Card Hover Effect */
