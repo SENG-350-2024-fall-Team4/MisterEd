@@ -33,6 +33,9 @@
               <router-link class="nav-link active" to="/manage-appointment" @click="closeOffcanvas">Manage Appointments</router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link active" to="/patients-records" @click="closeOffcanvas">Patients Records</router-link>
+            </li>
+            <li class="nav-item">
               <router-link class="nav-link active" to="/" @click.prevent="logout">Logout</router-link>
             </li>
           </ul>
@@ -43,17 +46,25 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as bootstrap from 'bootstrap';
+import { useAuthStore } from '../store/auth'; // Import the authStore
 
 export default {
   name: 'NavbarAppointment',
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const authStore = useAuthStore(); // Access the authentication store
 
-    const username = ref("Username"); // Placeholder value; replace with actual user data if available
+    // Dynamically get the username from the authStore
+    const username = computed(() => {
+      if (authStore.isAuthenticated && authStore.user) {
+        return `${authStore.user.first_name} ${authStore.user.last_name}`;
+      }
+      return 'Guest'; // Fallback if not authenticated
+    });
 
     const pageTitle = computed(() => {
       switch (route.name) {
@@ -61,12 +72,14 @@ export default {
           return 'Create Appointment';
         case 'ManageAppointment':
           return 'Manage Appointments';
-        case 'EditProfile':
-          return 'Edit Profile';
+        case 'PatientRecords':
+          return 'Patients Records';
+        case 'PatientHistory':
+          return 'Patient History';
         case 'HomePage':
           return 'Home';
         default:
-          return 'Manage Appointments';
+          return 'Home';
       }
     });
 
@@ -78,8 +91,8 @@ export default {
           return '/create-appointment';
         case 'Manage Appointments':
           return '/manage-appointment';
-        case 'Edit Profile':
-          return '/edit-profile';
+        case 'Patients Records':
+          return '/patients-records';
         default:
           return '/home-page';
       }
@@ -94,11 +107,17 @@ export default {
       }
     };
 
-    // Logout function that redirects to the main page
-    const logout = () => {
-      // Add logout logic here, such as clearing session data if needed
-      router.push('/');
+    // Logout function
+    const logout = async () => {
+      await authStore.logout(router); // Use the logout method from authStore
     };
+
+    onMounted(() => {
+      // Ensure user data is fetched when the navbar is mounted
+      if (!authStore.user) {
+        authStore.fetchUser();
+      }
+    });
 
     return {
       pageTitle,
@@ -109,6 +128,7 @@ export default {
     };
   },
 };
+
 </script>
 
 <style scoped>
@@ -124,16 +144,47 @@ export default {
 /* Make the navbar pop up with shadow and a bottom border */
 .navbar {
   background-color: #f8f9fa; /* Light background color to distinguish the navbar */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect for elevation */
+  /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect for elevation */
   border-bottom: 2px solid #dee2e6; /* Border to clearly define the end of the navbar */
 }
 
-.navbar-brand {
+/* .navbar-brand {
   font-weight: bold;
+} */
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0d6efd;
+  text-decoration: none;
+}
+.offcanvas-title {
+  font-weight: bold;
+}
+
+</style>
+
+<style scoped>
+
+.nav-link {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #aab3c0;
+  
+}
+
+.nav-link:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: #7297cf; /* Blue background on hover */
+  border-radius: 5px; /* Smooth rounded corners for the hover effect */
+}
+
+.navbar-toggler {
+  border: none;
 }
 
 .offcanvas-title {
   font-weight: bold;
+  color: #0d6efd;
 }
 
 </style>

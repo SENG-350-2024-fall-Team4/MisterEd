@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from datetime import datetime,timezone, timedelta
@@ -225,31 +226,23 @@ def get_recent_activity():
 # Patients in ER
 @app.route('/api/appointments/current-schedule', methods=['GET'])
 def get_current_schedule():
-    """Fetch patients scheduled for the current hour."""
-    now = datetime.now(timezone.utc)  # Current UTC time
-    current_hour = now.hour  # Extract the current hour (e.g., 14 for 2 PM UTC)
-
-    # Filter appointments that fall within the current hour
-    current_hour_patients = Appointment.query.filter(
-        Appointment.scheduled_hour == current_hour
+    """Fetch all patients who are scheduled."""
+    # Query all patients with a non-null `scheduled_hour`
+    scheduled_patients = Appointment.query.filter(
+        Appointment.scheduled_hour.isnot(None)
     ).all()
 
-    # Format the hour range for display
-    start_time = f"{current_hour}:00"
-    end_time = f"{(current_hour + 1) % 24}:00"  # Wrap around to 0 after 23
-
     return jsonify({
-        "current_hour_patients": [
+        "scheduled_patients": [
             {
                 "id": appt.id,
-                "time": f"{start_time} - {end_time}",
+                "time": f"{appt.scheduled_hour}:00 - {(appt.scheduled_hour + 1) % 24}:00",  # Format the hour interval
                 "patientName": f"{appt.first_name} {appt.last_name}",
                 "priority": appt.severity
             }
-            for appt in current_hour_patients
+            for appt in scheduled_patients
         ]
     }), 200
-
 
 
 @app.route('/api/appointments/triage-results', methods=['GET'])
@@ -300,12 +293,51 @@ def update_schedule():
     return jsonify({"success": True, "message": "Schedule updated successfully"}), 200
 
 
-# Appointment History
 @app.route('/api/appointments/history', methods=['GET'])
-def appointment_history():
-    patient_id = request.args.get('patientId')
-    appointments = Appointment.query.filter_by(id=patient_id).all()
-    return jsonify([appt.to_dict() for appt in appointments]), 200
+def get_patient_history():
+    """
+    Fetch the appointment history of a patient by their first and last name.
+    """
+    first_name = request.args.get('first_name')
+    last_name = request.args.get('last_name')
+
+    if not first_name or not last_name:
+        return jsonify({"error": "Missing first_name or last_name parameter"}), 400
+
+    try:
+        # Query appointments by first and last name
+        appointments = Appointment.query.filter_by(first_name=first_name, last_name=last_name).all()
+        
+        # If no appointments are found
+        if not appointments:
+            return jsonify([]), 200
+
+        # Serialize the appointments to JSON
+        appointment_history = [appointment.to_dict() for appointment in appointments]
+
+        return jsonify(appointment_history), 200
+    except SQLAlchemyError as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/appointments/all-records', methods=['GET'])
+@cross_origin(origins="http://localhost:8081")
+def get_all_patients():
+    patients = Appointment.query.all()
+    return jsonify({
+        "patients": [
+            {
+                "id": patient.id,
+                "first_name": patient.first_name,
+                "last_name": patient.last_name,
+                "phone_number": patient.phone_number,
+                "address": patient.address,
+                "severity": patient.severity,
+                "scheduled_hour": patient.scheduled_hour,
+                "date": patient.created_at.date().isoformat()  # Include the date
+            }
+            for patient in patients
+        ]
+    }), 200
 
 
 

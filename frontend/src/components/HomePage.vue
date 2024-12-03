@@ -65,7 +65,7 @@ export default {
       todayAppointmentsCount: 0,
       pendingTriageCount: 0,
       recentActivity: [],
-      currentSchedule: [],
+      currentSchedule: [], // Stores patients in the ER
     };
   },
   methods: {
@@ -73,54 +73,49 @@ export default {
       try {
         const response = await fetch('http://localhost:5000/api/appointments/today-overview');
         const data = await response.json();
-        this.todayAppointmentsCount = data.today_appointments;
+        console.log("here is the data: ", data);
+        this.todayAppointmentsCount = data.appointments;
         this.pendingTriageCount = data.pending_triage;
       } catch (error) {
         console.error('Error fetching Today\'s Overview:', error);
       }
     },
     async fetchRecentActivity() {
-    try {
+      try {
         const response = await fetch('http://localhost:5000/api/appointments/recent-activity');
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        
-        if (data.recent_activity && Array.isArray(data.recent_activity)) {
-            this.recentActivity = data.recent_activity.map(activity => ({
-                id: activity.id,
-                message: activity.message
-            }));
-        } else {
-            console.error("Unexpected data format:", data);
-            this.recentActivity = [];
-        }
-    } catch (error) {
-        console.error("Error fetching Recent Activity:", error);
-        this.recentActivity = [];
-    }
-},
-
-async fetchCurrentSchedule() {
-    try {
+        this.recentActivity = data.recent_activity.map(activity => ({
+          id: activity.id,
+          message: activity.message,
+        }));
+      } catch (error) {
+        console.error('Error fetching Recent Activity:', error);
+      }
+    },
+    async fetchCurrentSchedule() {
+      try {
         const response = await fetch('http://localhost:5000/api/appointments/current-schedule', {
-            mode: 'cors', // Ensure CORS is used
-            headers: {
-                'Content-Type': 'application/json'
-            }
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        this.currentSchedule = data.current_hour_patients;
-        console.log(this.currentSchedule)
-    } catch (error) {
-        console.error("Error fetching Current Schedule:", error);
-    }
-}
-,
+        this.currentSchedule = data.scheduled_patients.map(patient => ({
+          id: patient.id,
+          time: patient.time,
+          patientName: patient.patientName,
+          priority: patient.priority,
+        }));
+      } catch (error) {
+        console.error('Error fetching Current Schedule:', error);
+      }
+    },
   },
   mounted() {
     this.fetchTodayOverview();
@@ -129,6 +124,7 @@ async fetchCurrentSchedule() {
   },
 };
 </script>
+
 
 <style scoped>
 .home-page {
