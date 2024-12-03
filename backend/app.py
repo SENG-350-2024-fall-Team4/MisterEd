@@ -5,10 +5,13 @@ from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 from datetime import datetime,timezone, timedelta
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mistered_user:mister56neuf@localhost/mistered_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'your_secret_key'  # Replace with a strong secret key
 # CORS(app)

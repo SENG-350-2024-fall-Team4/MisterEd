@@ -76,6 +76,7 @@
 <script>
 import NavbarAppointment from './NavbarAppointment.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios'; // Ensure axios is imported
 
 export default {
   components: {
@@ -93,24 +94,48 @@ export default {
     };
   },
   methods: {
-    submitAppointment() {
-      Swal.fire({
-        title: `Appointment Booked!`,
-        text: `You have successfully put ${this.firstName} ${this.lastName} on the queue. They will receive a text with their scheduled appointment time.`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        background: '#d9f7ff', // Light blue background color
-        color: '#333', // Dark text color for contrast
-        confirmButtonColor: '#4CAF50', // Green color for confirm button
-        iconColor: '#4CAF50', // Icon color to match the theme
-        customClass: {
-          popup: 'custom-swal-popup',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-        },
-      });
+    async submitAppointment() {
+      try {
+        // Send a POST request to the backend with appointment details
+        await axios.post('http://localhost:5000/api/appointments', {
+          first_name: this.firstName,
+          last_name: this.lastName,
+          address: this.address,
+          phone_number: this.phoneNumber,
+          insurance_number: this.insuranceNumber,
+          description: this.description,
+          severity: this.severity, // Pass severity level from the store
+        });
 
-      this.resetForm(); // Clear the form fields after submission
+        // Display success message
+        Swal.fire({
+          title: `Appointment Booked!`,
+          text: `You have successfully put ${this.firstName} ${this.lastName} on the queue. They will receive a text with their scheduled appointment time.`,
+          icon: 'success',
+          confirmButtonText: 'OK',
+          background: '#d9f7ff', // Light blue background color
+          color: '#333', // Dark text color for contrast
+          confirmButtonColor: '#4CAF50', // Green color for confirm button
+          iconColor: '#4CAF50', // Icon color to match the theme
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            content: 'custom-swal-content',
+          },
+        });
+
+        this.resetForm(); // Clear the form fields after successful submission
+      } catch (error) {
+        console.error('Error booking appointment:', error);
+
+        // Display error message
+        Swal.fire({
+          title: 'Error',
+          text: 'An error occurred while booking the appointment. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
     },
     resetForm() {
       this.firstName = '';
@@ -124,6 +149,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Title Styling */
